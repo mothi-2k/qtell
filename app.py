@@ -20,7 +20,6 @@ st.title("RAG Application built on Gemini Model")
 st.session_state.uploaded_file = st.file_uploader("Upload a PDF file (optional)", type="pdf")
 if 'files' not in st.session_state:
     st.session_state.files = []
-st.session_state
 docs = []
 vectorstore = None
 
