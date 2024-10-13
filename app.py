@@ -9,7 +9,7 @@ DATABASE_URL = 'postgresql://postgres.uvamvatffkoqvcghnsph:nbutOY2d52MiEi7B@aws-
 
 @app.route('/')
 def hello():
-    return "Hello, World!"
+    return "Hello, World!!"
 
 @app.route('/data')
 def get_data():
