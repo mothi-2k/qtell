@@ -3,7 +3,7 @@ import psycopg2
 import os
 
 app = Flask(__name__)
-
+ 
 # Database connection parameters
 DATABASE_URL = os.getenv('DATABASE_URL')
 
