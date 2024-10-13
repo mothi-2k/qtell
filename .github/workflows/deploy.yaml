@@ -23,18 +23,20 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ghcr.io/${{ secrets.YOUR_GITHUB_USERNAME }}/qtell:latest .
-          docker push ghcr.io/${{ secrets.YOUR_GITHUB_USERNAME }}/qtell:latest
+          IMAGE_NAME=ghcr.io/${{ secrets.YOUR_GITHUB_USERNAME }}/qtell:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
 
-      - name: Trigger Render Deployment
+      - name: Deploy to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          IMAGE_NAME: ghcr.io/${{ secrets.YOUR_GITHUB_USERNAME }}/qtell:latest
         run: |
-          curl -X POST "https://api.render.com/v1/deploys" \
-          -H "Content-Type: application/json" \
-          -H "Accept: application/json" \
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
           -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json" \
           -d '{
-            "serviceId": "'"$RENDER_SERVICE_ID"'"
+            "clearCache": "clear",
+            "imageUrl": "'"${IMAGE_NAME}"'"
           }'
