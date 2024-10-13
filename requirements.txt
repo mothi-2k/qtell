@@ -1,4 +1,11 @@
-Flask
-gunicorn
-Werkzeug
-psycopg2-binary
+langchain
+langchain_community
+langchain-google-genai
+python-dotenv
+streamlit
+langchain_experimental
+sentence-transformers
+langchain_chroma
+langchainhub
+pypdf
+rapidocr-onnxruntime
