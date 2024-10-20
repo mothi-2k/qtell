@@ -11,6 +11,6 @@ langchainhub
 pypdf
 rapidocr-onnxruntime
 bcrypt
-psycopg2-binary
+psycopg
 gunicorn
 langchain_postgres
