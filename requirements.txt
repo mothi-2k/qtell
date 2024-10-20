@@ -1,3 +1,4 @@
+pymongo
 langchain
 langchain_community
 langchain-google-genai
@@ -9,3 +10,6 @@ langchain_chroma
 langchainhub
 pypdf
 rapidocr-onnxruntime
+bcrypt
+psycopg2-binary
+gunicorn

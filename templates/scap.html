@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Chat Interface</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #e0e0e0;
+        }
+
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        body.light-mode .chat-container {
+            background-color: #ffffff;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            background-color: #262626;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        body.light-mode .chat-header {
+            background-color: #e5e5e5;
+            color: #333;
+        }
+
+        .chat-header .theme-toggle {
+            cursor: pointer;
+            font-size: 20px;
+            color: #f5f5f5;
+            padding: 5px;
+        }
+
+        body.light-mode .chat-header .theme-toggle {
+            color: #333;
+        }
+
+        /* Chat Body */
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #181818;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #1e1e1e;
+        }
+
+        body.light-mode .chat-body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 4px;
+        }
+
+        .message {
+            margin: 8px 0;
+            max-width: 75%;
+            word-wrap: break-word;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #4a90e2;
+            color: #fff;
+        }
+
+        body.light-mode .user-message {
+            background-color: #357ab8;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #333333;
+            color: #fff;
+        }
+
+        body.light-mode .bot-message {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        /* Chat Footer */
+        .chat-footer {
+            background-color: #262626;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #333;
+        }
+
+        body.light-mode .chat-footer {
+            background-color: #e5e5e5;
+        }
+
+        .input-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .input-container input[type="text"] {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid #333;
+            outline: none;
+            background-color: #333;
+            font-size: 16px;
+            color: #fff;
+            transition: border-color 0.3s;
+        }
+
+        body.light-mode .input-container input[type="text"] {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .input-container input[type="text"]:focus {
+            border-color: #4a90e2;
+        }
+
+        /* Icons and Buttons */
+        .attach-button {
+            border: none;
+            background: none;
+            margin-right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+
+        .attach-button:hover {
+            color: #4a90e2;
+        }
+
+        .send-button {
+            border: none;
+            background: none;
+            margin-left: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #4a90e2;
+            transition: color 0.3s ease;
+        }
+
+        .send-button:hover {
+            color: #357ab8;
+        }
+
+        /* Logout button */
+        .logout-button {
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 15px;
+            align-self: flex-end;
+            transition: background-color 0.3s;
+        }
+
+        body.light-mode .logout-button {
+            background-color: #e63939;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .chat-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .chat-footer {
+                padding: 10px;
+            }
+
+            .input-container input[type="text"] {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .send-button {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>QTell</h2>
+            <i class="fas fa-moon theme-toggle" onclick="toggleTheme()"></i>
+        </div>
+        
+        <div class="chat-body" id="chat-body">
+            <!-- Chat history will be rendered here -->
+            {% for item in history %}
+                <div class="message user-message">
+                    <div class="message-text">{{ item['chat']['user'] }}</div>
+                </div>
+                <div class="message bot-message">
+                    <div class="message-text">{{ item['chat']['bot'] }}</div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="chat-footer">
+            <div class="input-container">
+                <button class="attach-button" onclick="document.getElementById('file-upload').click();">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <input type="file" id="file-upload" onchange="uploadFile()" style="display: none;" multiple>
+
+                <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
+                
+                <button onclick="sendMessage()" class="send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            if (message) {
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        appendMessage(message, 'user-message');
+                        userInput.value = '';
+                        appendMessage(data.message, 'bot-message');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function appendMessage(message, className) {
+            const chatBody = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.classList.add('message', className);
+            div.innerHTML = `<div class="message-text">${message}</div>`;
+            chatBody.appendChild(div);
+            scrollToBottom(); // Scroll to bottom whenever a message is appended
+        }
+
+        function scrollToBottom() {
+            const chatBody = document.getElementById('chat-body');
+            chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+        }
+
+        function uploadFile() {
+            // File upload logic
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle');
+            body.classList.toggle('light-mode');
+            themeIcon.classList.toggle('fa-moon');
+            themeIcon.classList.toggle('fa-sun');
+        }
+
+        // Add event listener for Enter key press
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Scroll to bottom on page load
+        window.onload = scrollToBottom; // Scroll to bottom on page load
+    </script>
+</body>
+</html>

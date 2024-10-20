@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f7f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 768px;
+            height: 100%;
+            max-height: 90vh;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin: 8px 0;
+            max-width: 75%;
+            word-wrap: break-word;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #eaeaea;
+            color: #333;
+        }
+
+        .chat-footer {
+            background-color: #ffffff;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #ddd;
+        }
+
+        .input-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container input[type="text"] {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            outline: none;
+            background-color: #fafafa;
+            font-size: 16px;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+
+        .input-container input[type="text"]:focus {
+            border-color: #007bff;
+        }
+
+        .send-button {
+            margin-left: 10px;
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .send-button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .attach-button {
+            margin-right: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .attach-button img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Scrollbar Styling */
+        .chat-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background-color: #c4c4c4;
+            border-radius: 4px;
+        }
+
+        .chat-body {
+            scrollbar-width: thin;
+            scrollbar-color: #c4c4c4 #f2f2f2;
+        }
+
+        /* Logout Button */
+        .logout-button {
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 15px;
+            align-self: flex-end;
+        }
+
+        .logout-button:hover {
+            background-color: #e63939;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <button class="logout-button" onclick="logout()">Logout</button>
+        <div class="chat-body" id="chat-body">
+            <!-- Chat history will be rendered here -->
+            {% for item in history %}
+                <div class="message user-message">
+                    <div class="message-text">{{ item['chat']['user'] }}</div>
+                </div>
+                <div class="message bot-message">
+                    <div class="message-text">{{ item['chat']['bot'] }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="chat-footer">
+            <div class="input-container">
+                <button class="attach-button" onclick="document.getElementById('file-upload').click();">
+                    <img src="{{ url_for('static', filename='icons/upload-icon.svg') }}" alt="Upload Icon">
+                </button>
+                <input type="file" id="file-upload" onchange="uploadFile()" style="display: none;" multiple>
+                
+                <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
+                
+                <button onclick="sendMessage()" class="send-button">
+                    <img src="{{ url_for('static', filename='icons/send-icon.svg') }}" alt="Send Icon">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            if (message) {
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        appendMessage(message, 'user-message');
+                        userInput.value = '';
+                        appendMessage(data.message, 'bot-message');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        function appendMessage(message, className) {
+            const chatBody = document.getElementById('chat-body');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', className);
+            const messageText = document.createElement('div');
+            messageText.classList.add('message-text');
+            messageText.textContent = message;
+            messageElement.appendChild(messageText);
+            chatBody.appendChild(messageElement);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function uploadFile() {
+            const fileInput = document.getElementById('file-upload');
+            const files = fileInput.files;
+            if (files.length > 0) {
+                const formData = new FormData();
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('files', files[i]);
+                }
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        appendMessage(data.message, 'bot-message');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function logout() {
+            fetch('/logout', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
