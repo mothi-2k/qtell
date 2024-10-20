@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Chat Interface</title>
+    <title>QTell</title>
     <!-- Fonts and Icons -->
+    <link rel="icon" href="{{ url_for('static', filename='icons/page-icon.svg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -123,6 +124,7 @@
         .user-message {
             align-self: flex-end;
             background-color: #4a90e2;
+            background-color: #5882b3;
             color: #fff;
         }
     
@@ -321,9 +323,25 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
+            <!--
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40" width="100" height="40">
                 <text x="0" y="30" font-family="Montserrat" font-size="30" fill="currentColor">QTell</text>
             </svg>
+            -->
+            <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="rL2wppHyxHVbobwndsT6Ca" x1="0%" x2="00%" y1="00%" y2="100%" gradientUnits="userSpaceOnUse">
+                    <stop offset="25%" stop-color="#97C2F7" />
+                     <stop offset="45%" stop-color="#F0C419" /> 
+                    <stop offset="50%" stop-color="#FB7B76" />
+                    <stop offset="75%" stop-color="#94C783" />
+                  </linearGradient>
+                </defs>
+                <text x="0" y="30" font-family="Montserrat" font-size="30" fill="url(#rL2wppHyxHVbobwndsT6Ca)">
+                  QTell
+                </text>
+              </svg>
+              
             <div class="github-icon">
                 <img src="{{ url_for('static', filename='icons/github-icon.svg') }}" alt="GitHub" width="30" height="30">
             </div>            

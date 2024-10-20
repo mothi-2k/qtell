@@ -9,18 +9,14 @@ import datetime
 import tempfile
 import os
 from dotenv import load_dotenv
+from werkzeug.exceptions import RequestEntityTooLarge
 
 load_dotenv(override=True)
 
 app = Flask(__name__)
 app.secret_key = os.getenv('JWT_SECRET_KEY') 
 app.config['JWT_EXPIRATION'] = 30  
-MAX_TOTAL_SIZE_MB = 3  # Maximum total size in MB
-MAX_TOTAL_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024 
-
-# Hardcoded user for demonstration
-USERNAME = 'a'
-PASSWORD = 'a'
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 # Ensure the uploads directory exists
 UPLOAD_FOLDER = './uploads'
@@ -109,13 +105,13 @@ def chat():
                 user_message = request.json.get('message')
                 qtell = QtellBot(EmbedPersist(decoded['sub']).get_retriever())
                 answer = qtell.ask_question(user_message, history_obj.get_history(decoded['sub']))
-                # answer = 'hello'
                 response_message = f"{answer}"
                 history_obj.insert_history(decoded['sub'], {'user': user_message, 'bot': response_message})
                 return jsonify({'message': response_message})
         return jsonify({'status': 'error'}), 401  
     except Exception:
         traceback.print_exc()
+        return jsonify({'error': 'Internal error / please try after sometime :('}), 500
     finally:
         if user_obj:
             user_obj.close_connection()
@@ -135,27 +131,21 @@ def upload_file():
                 if 'files' not in request.files:
                     return jsonify({'error': 'No files uploaded'}), 400
 
-                uploaded_files = request.files.getlist('files')
-                print(uploaded_files)
-                total_size = sum(file.content_length for file in uploaded_files if file and file.filename)
+                uploaded_files = request.files.getlist('files')     
                 
-                if total_size > MAX_TOTAL_SIZE_BYTES:
-                    return jsonify({'error': f'Total file size exceeds {MAX_TOTAL_SIZE_MB} MB'}), 400       
-                
-                embed_obj = EmbedPersist(decoded['sub'])
+                embed_obj = EmbedPersist(decoded['sub']) 
                 for uploaded_file in uploaded_files:
                     if uploaded_file.filename == '':    
-                        continue  
-                    # with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-                    #     temp_file.write(uploaded_file.read())
-                    #     temp_file_path = temp_file.name                    
+                        continue                     
                     embed_obj.add_to_pg(uploaded_file)
-                        # os.remove(temp_file_path)
 
                 return jsonify({'message': 'Files processed successfully'}), 200
         return jsonify({'status': 'error'}), 401          
-    except Exception:
+    except RequestEntityTooLarge:
         traceback.print_exc()
+        return jsonify({'error': 'File too large (max size - 3MB) / internal error'}), 413 
+    except Exception:
+        return jsonify({'error': 'Internal error / please try after sometime :('}), 500
     finally:
         if user_obj: 
             user_obj.close_connection()        
@@ -210,38 +200,5 @@ def signup():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-
-
-# from embed_persist import EmbedPersist
-# from history_persist import HistoryPersist
-# from qtell_bot import QtellBot
-# import traceback
-
-# user = 'a'
-# query = 'who is vasanth\' grandma '
-
-# try:
-#     user_embed = EmbedPersist(user)
-#     retrieverr = user_embed.get_retriever()
-#     bot = QtellBot(retrieverr)
-#     # user_embed.add_to_pg(open('Vasanth Resume.pdf', 'rb'))
-#     history = HistoryPersist()
-#     history_list = history.get_history(user)
-#     if history_list is None: history_list = []
-#     response = bot.ask_question(query, history_list)
-#     print(response)
-#     history.close_connection()
-    
-# except Exception:
-#     traceback.print_exc()
-# finally:
-#     history.close_connection()
-
-
-
 
 

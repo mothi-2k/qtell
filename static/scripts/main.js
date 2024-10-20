@@ -1,7 +1,11 @@
+let isProcessing = false;
+
 function sendMessage() {
+    if (isProcessing) return; // Prevent sending if already processing
     const userInput = document.getElementById('user-input');
     const message = userInput.value.trim();
     if (message) {
+        isProcessing = true; // Set the flag to true
         fetch('/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -14,15 +18,16 @@ function sendMessage() {
                 userInput.value = '';
                 appendMessage(data.message, 'bot-message');
             } else {
-                window.location.href = ''
+                window.location.href = '';
             }
         })
-        .catch(
-            error => {
-                console.error('Error:', error);
-                window.location.href = '/'
-            }
-        );
+        .catch(error => {
+            console.error('Error:', error);
+            window.location.href = '/';
+        })
+        .finally(() => {
+            isProcessing = false; // Reset the flag when done
+        });
     }
 }
 
@@ -41,9 +46,12 @@ function scrollToBottom() {
 }
 
 function uploadFile() {
+    if (isProcessing) return; // Prevent upload if already processing
     const fileInput = document.getElementById('file-upload');
     const files = fileInput.files;
+
     if (files.length > 0) {
+        isProcessing = true; // Set the flag to true
         const formData = new FormData();
         for (let i = 0; i < files.length; i++) {
             formData.append('files', files[i]);
@@ -53,13 +61,25 @@ function uploadFile() {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'An unknown error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.message) {
                 appendMessage(data.message, 'bot-message');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            appendMessage(error.message, 'bot-message');
+        })
+        .finally(() => {
+            isProcessing = false; // Reset the flag when done
+        });
     }
 }
 
