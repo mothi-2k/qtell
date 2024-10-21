@@ -11,6 +11,7 @@ pypdf
 rapidocr-onnxruntime
 bcrypt
 psycopg-binary
+psycopg2-binary
 gunicorn
 langchain_postgres
 flask
