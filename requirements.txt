@@ -14,3 +14,4 @@ psycopg-binary
 gunicorn
 langchain_postgres
 flask
+PyJWT
