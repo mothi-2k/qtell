@@ -143,7 +143,7 @@ def upload_file():
         return jsonify({'status': 'error'}), 401          
     except RequestEntityTooLarge:
         traceback.print_exc()
-        return jsonify({'error': 'File too large (max size - 3MB) / internal error'}), 413 
+        return jsonify({'error': 'File too large (max size - 1MB) / internal error'}), 413 
     except Exception:
         return jsonify({'error': 'Internal error / please try after sometime :('}), 500
     finally:
