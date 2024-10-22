@@ -111,7 +111,7 @@ def chat():
         return jsonify({'status': 'error'}), 401  
     except Exception:
         traceback.print_exc()
-        return jsonify({'error': 'Internal error / please try after sometime :('}), 500
+        return jsonify({'message': 'Sorry we\'re out of free tokens today 😭 please try after sometime'}), 200
     finally:
         if user_obj:
             user_obj.close_connection()
