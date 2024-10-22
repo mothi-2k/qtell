@@ -3,164 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Interface</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>QTell</title>
+    <!-- Fonts and Icons -->
+    <link rel="icon" href="{{ url_for('static', filename='icons/page-icon.svg') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background-color: #f7f7f8;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }        
+    
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100vh; /* Full viewport height */
+            color: #e0e0e0;
+            overflow: hidden; /* Prevent scrolling on body */
+            height: -webkit-fill-available;
         }
-
+    
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+    
         .chat-container {
             width: 100%;
-            max-width: 768px;
-            height: 100%;
-            max-height: 90vh;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            height: 90vh; /* Default height for larger screens */
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
-
+    
+        body.light-mode .chat-container {
+            background-color: #ffffff;
+        }
+    
+        /* Chat Header */
+        .chat-header {
+            background-color: #262626;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        .chat-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #ffffff;
+        }
+    
+        body.light-mode .chat-header {
+            background-color: #e5e5e5;
+            color: #333;
+        }
+    
+        .chat-header .theme-toggle {
+            cursor: pointer;
+            font-size: 20px;
+            color: #f5f5f5;
+            padding: 5px;
+        }
+    
+        body.light-mode .chat-header .theme-toggle {
+            color: #333;
+        }
+    
+        /* Chat Body */
         .chat-body {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background-color: #f2f2f2;
+            background-color: #181818;
             display: flex;
             flex-direction: column;
+            scrollbar-width: thin;
+            scrollbar-color: #333 #1e1e1e;
         }
-
+    
+        body.light-mode .chat-body {
+            background-color: #f5f5f5;
+            color: #333;
+            scrollbar-color: #ccc #e5e5e5; /* Light theme scrollbar colors */
+        }
+    
+        .chat-body::-webkit-scrollbar {
+            width: 8px;
+        }
+    
+        .chat-body::-webkit-scrollbar-thumb {
+            background-color: #333;
+            border-radius: 4px;
+        }
+    
+        body.light-mode .chat-body::-webkit-scrollbar-thumb {
+            background-color: #ccc; /* Light mode scrollbar color */
+        }
+    
         .message {
             margin: 8px 0;
             max-width: 75%;
             word-wrap: break-word;
-            padding: 10px 15px;
-            border-radius: 15px;
+            padding: 12px 18px;
+            border-radius: 20px;
             font-size: 15px;
-            line-height: 1.4;
+            line-height: 1.5;
+            transition: all 0.3s ease;
         }
-
+    
         .user-message {
             align-self: flex-end;
-            background-color: #007bff;
+            background-color: #4a90e2;
+            background-color: #5882b3;
             color: #fff;
         }
-
+    
+        body.light-mode .user-message {
+            background-color: #357ab8;
+        }
+    
         .bot-message {
             align-self: flex-start;
-            background-color: #eaeaea;
+            background-color: #333333;
+            color: #fff;
+        }
+    
+        body.light-mode .bot-message {
+            background-color: #ddd;
             color: #333;
         }
-
+    
+        /* Chat Footer */
         .chat-footer {
-            background-color: #ffffff;
-            padding: 15px;
+            background-color: #262626;
+            padding: 10px; /* Reduced padding */
             display: flex;
             align-items: center;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #333;
+            flex-wrap: wrap; /* Allow wrapping */
         }
-
+    
+        body.light-mode .chat-footer {
+            background-color: #e5e5e5; /* Light mode footer background */
+            border-top: 1px solid #ccc; /* Light mode border */
+        }
+    
         .input-container {
             flex: 1;
-            position: relative;
             display: flex;
             align-items: center;
+            position: relative;
+            flex-wrap: nowrap; /* Prevent wrapping */
         }
-
+    
         .input-container input[type="text"] {
             flex: 1;
-            padding: 10px 20px;
+            padding: 10px; /* Reduced padding for smaller screens */
             border-radius: 25px;
-            border: 1px solid #ddd;
+            border: 1px solid #333;
             outline: none;
-            background-color: #fafafa;
-            font-size: 16px;
-            color: #333;
+            background-color: #333;
+            font-size: 14px; /* Smaller font size */
+            color: #fff;
             transition: border-color 0.3s;
         }
-
+    
+        body.light-mode .input-container input[type="text"] {
+            background-color: #f5f5f5;
+            color: #333;
+            border: 1px solid #ccc; /* Light mode border */
+        }
+    
         .input-container input[type="text"]:focus {
-            border-color: #007bff;
+            border-color: #4a90e2;
         }
-
-        .send-button {
-            margin-left: 10px;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s;
-        }
-
-        .send-button:hover {
-            background-color: #0056b3;
-        }
-
-        .send-button img {
-            width: 20px;
-            height: 20px;
-        }
-
+    
+        /* Icons and Buttons */
         .attach-button {
+            border: none;
+            background: none;
             margin-right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+    
+        .attach-button:hover {
+            color: #4a90e2;
+        }
+    
+        .send-button {
+            border: none;
+            background: none;
+            margin-left: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #4a90e2;
+            transition: color 0.3s ease;
+        }
+    
+        .send-button:hover {
+            color: #357ab8;
+        }
+    
+        .delete-button {
             border: none;
             background: none;
             cursor: pointer;
+            color: #ff4d4d;
+            font-size: 20px;
+            margin-left: 10px;
+            transition: color 0.3s ease;
         }
-
-        .attach-button img {
-            width: 24px;
-            height: 24px;
+    
+        .delete-button:hover {
+            color: #e63939;
         }
-
-        /* Scrollbar Styling */
-        .chat-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-body::-webkit-scrollbar-thumb {
-            background-color: #c4c4c4;
-            border-radius: 4px;
-        }
-
-        .chat-body {
-            scrollbar-width: thin;
-            scrollbar-color: #c4c4c4 #f2f2f2;
-        }
-
-        /* Logout Button */
+    
         .logout-button {
-            padding: 10px 20px;
-            background-color: #ff4d4d;
-            color: #fff;
             border: none;
-            border-radius: 5px;
+            background: none;
+            color: #ff4d4d;
+            font-size: 20px;
+            margin-left: 15px;
             cursor: pointer;
-            font-size: 14px;
-            margin: 15px;
-            align-self: flex-end;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 5px; /* Add some border-radius for rounded corners */
+        }
+    
+        .logout-button:hover {
+            color: #e63939;
+            background-color: rgba(255, 77, 77, 0.2); /* Light background on hover */
+        }
+    
+        .logout-button:active {
+            transform: scale(0.95); /* Slightly decrease size when clicked */
+        }
+    
+        /* Responsive Design for Mobile and Tablet */
+        @media (max-width: 900px) {
+            body {
+                height: 100vh; /* Ensure body height is 100% of viewport height on mobile and tablet */
+                height: -webkit-fill-available;
+            }
+    
+            .chat-container {
+                height: 100%; /* Set chat container height to fill the body */
+                border-radius: 0; /* Remove border-radius for a full-width effect */
+            }
+    
+            .message {
+                max-width: 85%;
+            }
+    
+            .chat-footer {
+                padding: 5px; /* Further reduced padding for mobile */
+            }
+    
+            .logout-button {
+                flex: 0 0 auto; /* Prevent shrinking */
+                margin-left: auto; /* Push it to the right */
+            }
+        }
+    
+        @media (max-width: 320px) {
+            .chat-footer {
+                padding: 5px; /* Further reduced padding */
+            }
+    
+            .input-container input[type="text"] {
+                padding: 8px; /* Additional reduction for smaller screens */
+                font-size: 12px; /* Smaller font size */
+            }
+    
+            .attach-button, .send-button, .logout-button {
+                font-size: 18px; /* Adjust font size */
+                margin-left: 5px; /* Reduce margin for smaller screens */
+                margin-right: 5px;
+            }
+        }
+        
+        .chat-header {
+            background-color: #262626;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between; /* Space out elements */
+            align-items: center; /* Center items vertically */
+            position: relative; /* For absolute positioning */
         }
 
-        .logout-button:hover {
-            background-color: #e63939;
+        .github-icon {
+            position: absolute; /* Position it absolutely */
+            left: 50%; /* Move to the center */
+            transform: translateX(-50%); /* Adjust back to center */
         }
+
+        .header-icons {
+            display: flex; /* Align delete and theme toggle icons in a row */
+            gap: 10px; /* Optional: add space between icons */
+        }
+
+
     </style>
+    
+    
+    
 </head>
 <body>
     <div class="chat-container">
-        <button class="logout-button" onclick="logout()">Logout</button>
+        <div class="chat-header">
+            <!--
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40" width="100" height="40">
+                <text x="0" y="30" font-family="Montserrat" font-size="30" fill="currentColor">QTell</text>
+            </svg>
+            -->
+            <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="rL2wppHyxHVbobwndsT6Ca" x1="0%" x2="00%" y1="00%" y2="100%" gradientUnits="userSpaceOnUse">
+                    <stop offset="25%" stop-color="#97C2F7" />
+                     <stop offset="45%" stop-color="#F0C419" /> 
+                    <stop offset="50%" stop-color="#FB7B76" />
+                    <stop offset="75%" stop-color="#94C783" />
+                  </linearGradient>
+                </defs>
+                <text x="0" y="30" font-family="Montserrat" font-size="30" fill="url(#rL2wppHyxHVbobwndsT6Ca)">
+                  QTell
+                </text>
+              </svg>
+              
+            <div class="github-icon">
+                <img src="{{ url_for('static', filename='icons/github-icon.svg') }}" alt="GitHub" width="30" height="30">
+            </div>            
+            <div>
+                <i class="fas fa-trash delete-button" onclick="deleteChat()" title="Delete Chat"></i>
+                <i class="fas fa-moon theme-toggle" onclick="toggleTheme()" title="Toggle Theme"></i>
+            </div>
+        </div>
+        
         <div class="chat-body" id="chat-body">
             <!-- Chat history will be rendered here -->
             {% for item in history %}
@@ -172,100 +368,25 @@
                 </div>
             {% endfor %}
         </div>
+
         <div class="chat-footer">
             <div class="input-container">
                 <button class="attach-button" onclick="document.getElementById('file-upload').click();">
-                    <img src="{{ url_for('static', filename='icons/upload-icon.svg') }}" alt="Upload Icon">
+                    <i class="fas fa-paperclip"></i>
                 </button>
-                <input type="file" id="file-upload" onchange="uploadFile()" style="display: none;" multiple>
-                
+                <input type="file" id="file-upload" onchange="uploadFile()" style="display: none;" accept=".pdf" multiple>
+
                 <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
                 
                 <button onclick="sendMessage()" class="send-button">
-                    <img src="{{ url_for('static', filename='icons/send-icon.svg') }}" alt="Send Icon">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
+                <button class="logout-button" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>                
             </div>
         </div>
     </div>
-
-    <script>
-        function sendMessage() {
-            const userInput = document.getElementById('user-input');
-            const message = userInput.value.trim();
-            if (message) {
-                fetch('/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message) {
-                        appendMessage(message, 'user-message');
-                        userInput.value = '';
-                        appendMessage(data.message, 'bot-message');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-        }
-
-        function appendMessage(message, className) {
-            const chatBody = document.getElementById('chat-body');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', className);
-            const messageText = document.createElement('div');
-            messageText.classList.add('message-text');
-            messageText.textContent = message;
-            messageElement.appendChild(messageText);
-            chatBody.appendChild(messageElement);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function uploadFile() {
-            const fileInput = document.getElementById('file-upload');
-            const files = fileInput.files;
-            if (files.length > 0) {
-                const formData = new FormData();
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('files', files[i]);
-                }
-
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message) {
-                        appendMessage(data.message, 'bot-message');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-
-        function logout() {
-            fetch('/logout', {
-                method: 'POST',
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = '/';
-                } else {
-                    alert('Logout failed');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        document.getElementById('user-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='scripts/main.js') }}"></script>
 </body>
 </html>

@@ -36,18 +36,13 @@ class EmbedPersist:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
                 temp_file.write(uploaded_file.read())
                 temp_file_path = temp_file.name
-
-            # Load the PDF document using the temporary file path
-            loader = PyPDFLoader(temp_file_path) # OLD CODE 
-            data = loader.load() # OLD CODE
-            
-            # loader = PyPDFLoader(uploaded_file) # NEW
-            # data = loader.load() # NEW
-            
+            loader = PyPDFLoader(temp_file_path)  
+            data = loader.load()
+        
             # Split the text into manageable chunks
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
             docs = text_splitter.split_documents(data)    
-            os.remove(temp_file_path) # OLD
+            os.remove(temp_file_path) 
             self.vectorstore.add_documents(docs)
         except Exception:
             traceback.print_exc()

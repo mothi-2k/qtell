@@ -78,7 +78,7 @@ def home():
         if token:
             decoded = decode_token(token)
             if decoded and user_obj.in_userbase(decoded['sub']):
-                return render_template('temp.html', history=history_obj.get_history(decoded['sub']))
+                return render_template('chat.html', history=history_obj.get_history(decoded['sub']))
         return redirect(url_for('index')) 
     except Exception:
         traceback.print_exc()
