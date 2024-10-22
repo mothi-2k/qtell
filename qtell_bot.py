@@ -15,7 +15,7 @@ class QtellBot:
             self.retriever = retriever
             self.history = []
 
-            self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0, max_tokens=None, timeout=None)
+            self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.3, max_tokens=None, timeout=None)
             self.system_prompt = (
                 "You are an assistant for question-answering tasks and your name is Qtell. "
                 "Use the following pieces of retrieved context to answer "
