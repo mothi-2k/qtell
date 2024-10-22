@@ -86,5 +86,3 @@ We use **PGVector** in PostgreSQL to store embeddings of user-uploaded PDFs for 
 - **Document Analysis**: Summarizes and extracts key information from PDFs.
 - **Educational Tool**: Assists students with analyzing lecture notes and study materials.
   
-## Contribution
-We welcome contributions! Feel free to fork the repository and create pull requests. For major changes, please open an issue first to discuss what you would like to modify.
