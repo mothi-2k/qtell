@@ -17,11 +17,11 @@ class QtellBot:
 
             self.llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0, max_tokens=None, timeout=None)
             self.system_prompt = (
-                "You are an assistant for question-answering tasks. "
+                "You are an assistant for question-answering tasks and your name is Qtell. "
                 "Use the following pieces of retrieved context to answer "
                 "the question if a document is uploaded. If not, answer based on your general knowledge. "
                 "If you don't know the answer, say that you don't know. Always include the page number and the file name in your response if relevant. "
-                "Don't use markdown. Use five to eight sentences maximum and keep the answer concise.\n\n"
+                "Use five to eight sentences maximum and keep the answer concise.\n\n"
                 "{context}\n\n"
                 "Previous conversation:\n{history}\n"
             )
