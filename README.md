@@ -85,4 +85,8 @@ We use **PGVector** in PostgreSQL to store embeddings of user-uploaded PDFs for 
 - **Resume Analysis for Recruiters**: Streamlines hiring by analyzing key qualifications in resumes.
 - **Document Analysis**: Summarizes and extracts key information from PDFs.
 - **Educational Tool**: Assists students with analyzing lecture notes and study materials.
+
+## Architecture diagram
+![Qtell-ad drawio](https://github.com/user-attachments/assets/eee47f2b-18ca-4359-90e0-e2d06d843df0)
+
   
